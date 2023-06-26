@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\TestStripePayment;
+use App\Listeners\PaymentFailed;
+use App\Listeners\PaymentProcessing;
+use App\Listeners\PaymentSucceeded;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +22,18 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+        'stripe-webhooks::payment_intent.succeeded' => [
+            PaymentSucceeded::class
+        ],
+
+        'stripe-webhooks::payment_intent.payment_failed' => [
+            PaymentFailed::class
+        ],
+
+        'stripe-webhooks::payment_intent.processing' => [
+            PaymentProcessing::class
+        ]
     ];
 
     /**

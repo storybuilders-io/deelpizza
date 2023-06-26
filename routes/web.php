@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\MollieWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [DonationController::class, 'index']);
-Route::post('/donate', [DonationController::class, 'store']);
+Route::post('/donate', [DonationController::class, 'store'])->name('donate');
+Route::get('/donate', [DonationController::class, 'show'])->name('donate.show');
+Route::post('webhooks/mollie', [MollieWebhookController::class, 'store'])->name('webhooks.mollie');

@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.box{
+    flex: 1 0 calc(25% - 10px);
+}
+
+.box:after{
+    content: '';
+    display: block;
+    padding-bottom: 100%;
+}
+
+.pizza {
+    box-shadow: 0 0 0px 40px #dd8126;
+    border-color: orange;
+}
+
+.slice {
+    width: 1px;
+    height: 100%;
+    background-color: #000;
+}

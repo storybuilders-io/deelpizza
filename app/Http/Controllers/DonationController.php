@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-
+use App\Models\Pizza;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Mollie\Laravel\Facades\Mollie;
 
 class DonationController extends Controller
 {
@@ -13,7 +15,7 @@ class DonationController extends Controller
      */
     public function index()
     {
-        return view('donate');
+        return view('home');
     }
 
     /**
@@ -27,17 +29,43 @@ class DonationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function show(Request $request)
     {
-        dd('yo');
+        return view('donate');
     }
 
     /**
      * Display the specified resource.
+     *
+     * @throws ValidationException
      */
-    public function show(string $id)
+    public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+           'slices' => 'required|min:1'
+        ]);
+
+        if($validator->fails()) {
+            return 'failed';
+        }
+
+        $slices = $request->get('slices');
+        $price = (string) (number_format( $slices * 2, 2, '.', ''));
+
+        $payment = Mollie::api()->payments->create([
+            "amount" => [
+                "currency" => "EUR",
+                "value" => $price
+            ],
+            "description" => "Order #12345",
+            "redirectUrl" => route('donate.show'),
+            "webhookUrl" => route('webhooks.mollie'),
+            "metadata" => [
+                "slices" => $slices
+            ],
+        ]);
+
+        return redirect($payment->getCheckoutUrl(), 303);
     }
 
     /**
